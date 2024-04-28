@@ -6,17 +6,17 @@ pods=$(kubectl get pods -n $namespace --no-headers=true | awk '{print $1}' | gre
 
 # Iterate over the list of pods and log into each pod
 for pod in $pods; do
-  if [[ $pod == *"abc"*]]; then
+  if [[ $pod == *"abc"* ]]; then
   echo "abc pod found: $pod"
   kubectl -n $namespace exec -it $pod -c abc -- /bin/bash -c rm -rf /mnt/logs/
   kubectl -n $namespace delete pod $pod --grace-period 0 --force
   fi 
-  if [[ $pod == *"def"*]]; then
+  if [[ $pod == *"def"* ]]; then
   echo "def pod found: $pod"
   kubectl -n $namespace exec -it $pod -c abc -- /bin/bash -c rm -rf /mnt/logs/
   kubectl -n $namespace delete pod $pod --grace-period 0 --force
   fi 
-  if [[ $pod == *"ghi"*]]; then
+  if [[ $pod == *"ghi"* ]]; then
   echo "abc pod found: $pod"
   kubectl -n $namespace exec -it $pod -c abc -- /bin/bash -c rm -rf /mnt/logs/
   kubectl -n $namespace delete pod $pod --grace-period 0 --force
