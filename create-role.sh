@@ -1,5 +1,5 @@
 #!/bin/bash
-ACCOUNT_ID="106878672844"
+ACCOUNT_ID="<aws_account_id>"
 
 # Create an IAM policy document with limited permissions
 POLICY_DOCUMENT=$(cat <<EOF
