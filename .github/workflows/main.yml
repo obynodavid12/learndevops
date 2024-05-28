@@ -1,10 +1,21 @@
+# name: test
+# on:
+#   pull_request_target:
+#     types: [assigned, opened, synchronize, reopened]
+# jobs:
+#   run_if:
+#     if:  startsWith(github.head_ref, 'learndevops/')
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "The head of this PR starts with 'learndevops/'"
+
+
 name: test
 on:
   pull_request_target:
-    types: [assigned, opened, synchronize, reopened]
+    types: [opened, reopened]
 jobs:
-  run_if:
-    if:  startsWith(github.head_ref, 'learndevops/')
+  test:
     runs-on: ubuntu-latest
     steps:
       - run: echo "The head of this PR starts with 'learndevops/'"
