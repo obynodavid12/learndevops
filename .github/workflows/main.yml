@@ -1,0 +1,10 @@
+name: test
+on:
+  pull_request_target:
+    types: [assigned, opened, synchronize, reopened]
+jobs:
+  run_if:
+    if:  startsWith(github.head_ref, 'learndevops/filter_ebs_vol_by_tags.sh')
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The head of this PR starts with 'learndevops/filter_ebs_vol_by_tags.sh'"
