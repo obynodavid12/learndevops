@@ -1,0 +1,47 @@
+def milliseconds_to_timecode(ms):
+    # Convert milliseconds to total seconds
+    total_seconds = ms / 1000.0
+    
+    # Extract hours, minutes, and seconds
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds % 3600) // 60)
+    seconds = int(total_seconds % 60)
+    
+    # For frames, we need to decide on a frame rate. Let's assume a common frame rate, e.g., 30 fps
+    frame_rate = 30.0
+    frames = int((total_seconds % 1) * frame_rate)
+    
+    # Format timecode as HH:MM:SS:FF
+    timecode = f"{hours:02}:{minutes:02}:{seconds:02}:{frames:02}"
+    return timecode
+
+# Example usage
+pre_roll_ms = 4334
+timecode = milliseconds_to_timecode(pre_roll_ms)
+print(f"Pre-roll timecode: {timecode}")
+
+
+def milliseconds_to_timecode(ms, fps):
+    total_seconds = ms / 1000
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds % 3600) // 60)
+    seconds = int(total_seconds % 60)
+    frames = int((total_seconds % 1) * fps)
+    return f"{hours:02}:{minutes:02}:{seconds:02}:{frames:02}"
+
+def main():
+    pre_roll_ms = 4067  # Given pre_roll value in milliseconds
+    fps = 30  # Common frame rate
+
+    # Convert pre_roll milliseconds to timecode
+    timecode = milliseconds_to_timecode(pre_roll_ms, fps)
+    print(f"Pre-Roll Timecode at {fps} FPS: {timecode}")
+
+    # Example conversions for other frame rates
+    frame_rates = [24, 25, 30, 50, 60, 23.976, 29.97, 59.94]
+    for rate in frame_rates:
+        timecode = milliseconds_to_timecode(pre_roll_ms, rate)
+        print(f"Pre-Roll Timecode at {rate} FPS: {timecode}")
+
+if __name__ == "__main__":
+    main()
