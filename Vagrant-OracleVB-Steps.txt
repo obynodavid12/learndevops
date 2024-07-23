@@ -1,0 +1,30 @@
+# Download Oracle VirtualBox - https://www.virtualbox.org/wiki/Downloads
+While downloading Run as an Administrator, it gives a Missing Dependencies Python Core /win32api=>Proceed With Installation Click No=>Click Yes=>Click Finish
+
+# Download Python - https://www.python.org/downloads/
+If you don't have Python installed on your computer then install it as an Administrator[Run as an Administrator]
+
+# Open CMD/Powershell as an Administrator
+py -m pip install pywin32
+python.exe -m pip install --upgrade pip
+
+# Finish VirtualBox Installation
+Go to the Virtualbox download on your computer,right click and Run as Administrator 
+
+# Vagrant Installation - https://developer.hashicorp.com/vagrant/docs/installation=>https://developer.hashicorp.com/vagrant/downloads
+# Windows, VirtualBox, and Hyper-V
+If you encounter an issue with Windows, you will get a blue screen if you attempt to bring up a VirtualBox VM with Hyper-V enabled.
+
+If you wish to use VirtualBox on Windows, you must ensure that Hyper-V is not enabled on Windows. You can turn off the feature with the following Powershell command for Windows 10.
+==>Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All
+
+For Windows 11, you can use an elevated Powershell.
+==>bcdedit /set hypervisorlaunchtype off
+
+You can also disable Hyper-V in the Windows system settings.
+
+Right click on the Windows button and select ‘Apps and Features’.
+Select Turn Windows Features on or off.
+Unselect Hyper-V and click OK.
+
+# Can increase vb.memory to "3072" or "4096" ,2048
