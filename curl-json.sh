@@ -66,4 +66,4 @@ echo -e "${YELLOW}...${NC}"
 # grep -E '"id":|"employee_name":|"employee_salary":|"employee_age":' curl.json | \
 # sed -E 's/"id": ([0-9]+),?/id=\1 /g; s/"employee_name": "([^"]+)",?/employee_name="\1" /g; s/"employee_salary": ([0-9]+),?/employee_salary=\1 /g; s/"employee_age": ([0-9]+),?/employee_age=\1\n/g' > status.txt
 
-
+# check for curl.json file in vscode AWS-DEVOPS_PROFESSIONAL
