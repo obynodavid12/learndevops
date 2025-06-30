@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+import os, sys, argparse, difflib, itertools, csv
+from datetime import datetime
+from pathlib import Path
+from tabulate import tabulate
+
+def collect_files(root_dir):
+    files = {}
+    for dirpath, _, filenames in os.walk(root_dir):
+        for f in filenames:
+            full_path = os.path.join(dirpath, f)
+            rel_path = os.path.relpath(full_path, root_dir)
+            norm_path = os.path.normcase(rel_path).replace("\\", "/")
+            files[norm_path] = full_path
+    return files
+
+def compare_file_lines(file1, file2):
+    with open(file1, encoding='utf-8', errors='ignore') as f1, open(file2, encoding='utf-8', errors='ignore') as f2:
+        left_lines = f1.readlines()
+        right_lines = f2.readlines()
+
+    matcher = difflib.SequenceMatcher(None, left_lines, right_lines)
+    table = []
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        for l, r in itertools.zip_longest(left_lines[i1:i2], right_lines[j1:j2], fillvalue=''):
+            diff_marker = "DIFF" if tag != 'equal' else ''
+            table.append([l.rstrip('\n'), diff_marker, r.rstrip('\n')])
+    return table
+
+def save_combined_csv(all_diffs, filename):
+    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["File", "Left Line", "Diff", "Right Line"])
+        for file_path, diffs in all_diffs.items():
+            for row in diffs:
+                writer.writerow([file_path] + row)
+
+def save_combined_txt(all_diffs, filename):
+    with open(filename, 'w', encoding='utf-8') as txtfile:
+        for file_path, diffs in all_diffs.items():
+            txtfile.write(f"\n=== File: {file_path} ===\n")
+            table_str = tabulate(diffs, headers=["LEFT", "DIFF", "RIGHT"], tablefmt="grid")
+            txtfile.write(f"{table_str}\n")
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("fromdir", help="First directory")
+    parser.add_argument("todir", help="Second directory")
+    parser.add_argument("--out-csv", default="diff_report.csv", help="Output CSV filename")
+    parser.add_argument("--out-txt", default="diff_report.txt", help="Output TXT table filename")
+    args = parser.parse_args()
+
+    from_files = collect_files(args.fromdir)
+    to_files = collect_files(args.todir)
+    all_keys = sorted(set(from_files) | set(to_files))
+
+    all_diffs = {}
+
+    for rel_path in all_keys:
+        from_path = from_files.get(rel_path)
+        to_path = to_files.get(rel_path)
+
+        if from_path and to_path:
+            diffs = compare_file_lines(from_path, to_path)
+            if any(row[1] == "DIFF" for row in diffs):  # only store if there's a diff
+                all_diffs[rel_path] = diffs
+        elif from_path:
+            all_diffs[rel_path] = [[f"(Only in {args.fromdir})", "DIFF", ""]]
+        elif to_path:
+            all_diffs[rel_path] = [["", "DIFF", f"(Only in {args.todir})"]]
+
+    save_combined_csv(all_diffs, args.out_csv)
+    save_combined_txt(all_diffs, args.out_txt)
+
+    print(f"\n✅ CSV saved to: {args.out_csv}")
+    print(f"✅ TXT saved to: {args.out_txt}")
+
+if __name__ == "__main__":
+    main()
