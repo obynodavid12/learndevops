@@ -1,0 +1,23 @@
+{
+  "phone": [
+    {
+      "id": "4",
+      "name": "Apple iPhone 11",
+      "price": 389.99,
+      "color": "Purple"
+    },
+    {
+      "id": "5",
+      "name": "Samsung Galaxy Z Fold2",
+      "price": 689.99,
+      "color": "Brown"
+    },
+    {
+      "id": "6",
+      "name": "X-TEST",
+      "stream_url": "https://172.10.9.10:2022",
+      "purchase_price": 200,
+      "sales_price": 250
+    }
+  ]
+}
