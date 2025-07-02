@@ -1,0 +1,23 @@
+{
+  "phone": [
+    {
+      "id": "4",
+      "name": "Apple iPhone 12",
+      "price": 398.99,
+      "color": "Purple"
+    },
+    {
+      "id": "5",
+      "name": "Apple Watch Series 8",
+      "price": 689.99,
+      "color": "Brown"
+    },
+    {
+      "id": "6",
+      "name": "Y-TEST",
+      "stream_url": "https://172.20.9.10:2035",
+      "purchase_price": 210,
+      "sales_price": 260
+    }
+  ]
+}
