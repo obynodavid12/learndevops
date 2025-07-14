@@ -1,0 +1,116 @@
+name: Manage API Resources with Kubernetes Secret
+
+on:
+  workflow_dispatch:
+    inputs:
+      folder:
+        description: 'Path to the folder containing JSON files (relative to repository root)'
+        required: true
+        type: string
+      operation:
+        description: 'API operation to perform (CREATE, UPDATE, DELETE)'
+        required: true
+        type: choice
+        options:
+          - CREATE
+          - UPDATE
+          - DELETE
+
+jobs:
+  manage-api-resources:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up kubectl
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      # Configure Kubernetes cluster access
+      - name: Configure Kubernetes context
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p $HOME/.kube
+          echo "$KUBE_CONFIG" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      # Retrieve API token from Kubernetes secret
+      - name: Retrieve API token from Kubernetes secret
+        env:
+          NAMESPACE: your-namespace  # Replace with your namespace
+          SECRET_NAME: your-secret-name  # Replace with your secret name
+          SECRET_KEY: token  # The key in the secret containing the API token
+        run: |
+          TOKEN=$(kubectl get secret $SECRET_NAME -n $NAMESPACE -o jsonpath="{.data.$SECRET_KEY}" | base64 -d)
+          if [ -z "$TOKEN" ]; then
+            echo "Error: Failed to retrieve token from secret" >&2
+            exit 1
+          fi
+          echo "API_TOKEN=$TOKEN" >> $GITHUB_ENV
+
+      # Process JSON files and make API calls
+      - name: Process JSON files and make API calls
+        env:
+          API_ENDPOINT: https://api.example.com/endpoint  # Replace with your API endpoint
+          FOLDER_PATH: ${{ github.event.inputs.folder }}
+          OPERATION: ${{ github.event.inputs.operation }}
+        run: |
+          # Validate folder path
+          if [ ! -d "$FOLDER_PATH" ]; then
+            echo "Error: Folder $FOLDER_PATH does not exist" >&2
+            exit 1
+          fi
+
+          # Determine HTTP method based on operation
+          case "$OPERATION" in
+            CREATE)
+              HTTP_METHOD="POST"
+              ;;
+            UPDATE)
+              HTTP_METHOD="PUT"
+              ;;
+            DELETE)
+              HTTP_METHOD="DELETE"
+              ;;
+            *)
+              echo "Error: Invalid operation $OPERATION" >&2
+              exit 1
+              ;;
+          esac
+
+          # Process each JSON file in the folder
+          for file in "$FOLDER_PATH"/*.json; do
+            if [ -f "$file" ]; then
+              echo "Processing $file..."
+              # Make API call with the JSON file
+              RESPONSE=$(curl -s -w "%{http_code}" -X $HTTP_METHOD \
+                -H "Authorization: Bearer $API_TOKEN" \
+                -H "Content-Type: application/json" \
+                --data @"$file" \
+                "$API_ENDPOINT")
+              
+              # Extract HTTP status code (last 3 characters)
+              STATUS=${RESPONSE: -3}
+              BODY=${RESPONSE%???}
+              
+              if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
+                echo "Successfully performed $OPERATION on $file (Status: $STATUS)"
+                echo "$BODY"
+              else
+                echo "Error: Failed to perform $OPERATION on $file (Status: $STATUS)" >&2
+                echo "$BODY" >&2
+                exit 1
+              fi
+            else
+              echo "No JSON files found in $FOLDER_PATH" >&2
+              exit 1
+            fi
+          done
