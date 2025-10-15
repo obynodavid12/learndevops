@@ -2,15 +2,15 @@
 set -euo pipefail
 
 # === CONFIGURABLE VARIABLES ===
-VPC_ID="vpc-xxxxxx"
+VPC_ID="vpc-0558ee04b4bc3ff4c"
 REGION="us-east-1"
-NEW_VPC_CIDR="172.32.64.0/24"              # CIDR to add to the VPC
-SOURCE_ROUTE_TABLE_ID="rtb-xxxxx" # Copy routes from this table
+NEW_VPC_CIDR="172.32.65.0/24"              # CIDR to add to the VPC
+SOURCE_ROUTE_TABLE_ID="rtb-0e52c9377892f5406" # Copy routes from this table
 TAG_PREFIX="use1-vpc Primary"
 
 # Define your two subnet CIDRs here
-SUBNET_1_CIDR="172.32.64.0/26"
-SUBNET_2_CIDR="172.32.64.64/26"
+SUBNET_1_CIDR="172.32.65.0/26"
+SUBNET_2_CIDR="172.32.65.64/26"
 
 # Optional: Specify AZs for each subnet (leave empty for automatic round-robin)
 SUBNET_1_AZ=""  # e.g., "us-east-1a" or leave empty
@@ -133,8 +133,8 @@ create_subnet_with_routes() {
   local CIDR=$1
   local AZ=$2
   local INDEX=$3
-  local SUBNET_NAME="${TAG_PREFIX} Private Subnet AZ${INDEX}"
-  local RTB_NAME="${TAG_PREFIX} Private Routes AZ${INDEX}"
+  local SUBNET_NAME="${TAG_PREFIX} Private Subnet (AZ${INDEX})"
+  local RTB_NAME="${TAG_PREFIX} Private Routes (AZ${INDEX})"
 
   echo ""
   echo "========================================="
