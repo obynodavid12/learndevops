@@ -2,10 +2,10 @@
 set -euo pipefail
 
 # === CONFIGURABLE VARIABLES ===
-VPC_ID="vpc-0558ee04b4bc3ff4c"
+VPC_ID="vpc-xxxxxxxx"
 REGION="us-east-1"
 NEW_VPC_CIDR="172.32.62.0/24"              # CIDR to add to the VPC
-SOURCE_ROUTE_TABLE_ID="rtb-0e52c9377892f5406" # Copy routes from this table
+SOURCE_ROUTE_TABLE_ID="rtb-xxxxxxx" # Copy routes from this table
 TAG_PREFIX="LabX"
 
 # Define your two subnet CIDRs here
