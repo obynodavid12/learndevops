@@ -1,4 +1,4 @@
-if you are facing timeout issues once logged into ec2 instances try below. 
+if you are facing timeout issues once logged into an ec2 instances try below. 
 
 on ec2 terminal, 
 
